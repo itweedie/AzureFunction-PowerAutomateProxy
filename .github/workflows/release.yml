@@ -2,10 +2,10 @@ name: Build and Deploy Azure Function App
 
 on:
   push:
-    #branches:
-    #  - 20250108-deploymentMethodChange
-    tags:
-      - 'v*' # Trigger on versioned tags (e.g., v1.0.0)
+    branches:
+      - 20250108-deploymentMethodChange
+    #tags:
+    #  - 'v*' # Trigger on versioned tags (e.g., v1.0.0)
 
 jobs:
   build-and-deploy:
