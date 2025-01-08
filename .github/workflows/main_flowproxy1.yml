@@ -1,72 +1,47 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy Node.js project to Azure Function App - flowproxy1
+name: Build and Deploy Azure Function App
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
-
-env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
-  NODE_VERSION: '20.x' # set this to the node version to use (supports 8.x, 10.x, 12.x)
+    #branches:
+    #  - 20250108-deploymentMethodChange
+    tags:
+      - 'v*' # Trigger on versioned tags (e.g., v1.0.0)
 
 jobs:
-  build:
-    runs-on: windows-latest
-    steps:
-      - name: 'Checkout GitHub Action'
-        uses: actions/checkout@v4
+  build-and-deploy:
+    runs-on: ubuntu-latest
 
-      - name: Setup Node ${{ env.NODE_VERSION }} Environment
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js environment (if applicable)
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: '14.x' # Adjust the Node.js version as needed
 
-      - name: 'Resolve Project Dependencies Using Npm'
-        shell: pwsh
+      # Step 3: Install dependencies and build the project
+      - name: Install Dependencies and Build
         run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
           npm install
-          npm run build --if-present
-          npm run test --if-present
-          popd
+          npm run build
 
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
-        with:
-          name: node-app
-          path: .
+      # Step 4: Archive the build output into a ZIP file
+      - name: Archive Project into ZIP
+        run: |
+          zip -r functionapp.zip .
 
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write #This is required for requesting the JWT
-
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
+      # Step 5: Create a GitHub Release and Upload the ZIP
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
         with:
-          name: node-app
-      
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_453D07E89F714912B0D13E7529FD9CDD }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_888CDA3C280847BCBE0E0524C1F5FC04 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_0CDF58BDA7A44F0684FCEA32AAB0AD66 }}
-
-      - name: 'Run Azure Functions Action'
-        uses: Azure/functions-action@v1
-        id: fa
-        with:
-          app-name: 'flowproxy1'
-          slot-name: 'Production'
-          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          
+          tag_name: ${{ github.ref_name }}
+          release_name: "Release ${{ github.ref_name }}"
+          body: "Function App package for deployment."
+          draft: false
+          prerelease: false
+          files: functionapp.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
