@@ -4,7 +4,7 @@ This repository contains an Azure Function that acts as an HTTP Proxy to authent
 ## Features
 
 - Forwards all headers received from the incoming request.
-- Adds custom header `Flow-Key` (from environment variables).
+- Adds custom header `Flow-Key` (from environment variables). 
 - Handles `GET` method.
 - Appends query parameters from the incoming request to the external URL.
 - Configurable via environment variables to avoid hardcoding sensitive data like URLs and keys.
