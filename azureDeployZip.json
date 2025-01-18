@@ -62,9 +62,9 @@
       ]
     },
     {
-      "type": "Microsoft.Web/sites/slots",
+      "type": "Microsoft.Web/sites/extensions",
       "apiVersion": "2022-03-01",
-      "name": "[concat(parameters('functionAppName'), '/production')]",
+      "name": "[concat(parameters('functionAppName'), '/MSDeploy')]",
       "location": "[parameters('location')]",
       "properties": {
         "packageUri": "https://github.com/itweedie/AzureFunction-PowerAutomateProxy/releases/download/v2.0.2/function-app.zip"
