@@ -14,7 +14,7 @@ app.http('Trigger2', {
 
         // Send headers back as plain text to debug
         return {
-            body: `Headers received:\n${JSON.stringify(headersObject, null, 2)}`,
+            body: `1Headers received:\n${JSON.stringify(headersObject, null, 2)}`,
             headers: {
                 'Content-Type': 'text/html'
             }
