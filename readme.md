@@ -12,7 +12,7 @@ This repository contains an Azure Function that acts as an HTTP Proxy to authent
 
 # Azure Function Power Automate Proxy
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fitweedie%2FAzureFunction-PowerAutomateProxy%2Frefs%2Fheads%2Fmain%2FazureDeployZip.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton" /></a>
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fitweedie%2FAzureFunction-PowerAutomateProxy%2Frefs%2Fheads%2Fmain%2FazureDeploy.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton" /></a>
 
 This repository contains an Azure Function that acts as a proxy for Power Automate.
 

@@ -28,7 +28,6 @@ app.http('headerTest', {
             requestInfo: {
                 url: request.url,
                 method: request.method,
-                query: request.query,
                 body: request.body
             },
             requestType: request.method
