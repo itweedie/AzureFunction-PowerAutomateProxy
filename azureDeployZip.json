@@ -1,198 +1,92 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "subscriptionId": {
-            "type": "string"
-        },
-        "name": {
-            "type": "string"
+        "appNamePrefix": {
+            "type": "string",
+            "maxLength": 14,
+            "metadata": {
+                "description": "The name of the function app that you wish to create."
+            }
         },
         "location": {
-            "type": "string"
-        },
-        "use32BitWorkerProcess": {
-            "type": "bool"
-        },
-        "ftpsState": {
-            "type": "string"
-        },
-        "storageAccountName": {
-            "type": "string"
-        },
-        "netFrameworkVersion": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "The location of the function app that you wish to create."
+            }
         },
         "sku": {
-            "type": "string"
-        },
-        "skuCode": {
-            "type": "string"
-        },
-        "workerSize": {
-            "type": "string"
-        },
-        "workerSizeId": {
-            "type": "string"
-        },
-        "numberOfWorkers": {
-            "type": "string"
-        },
-        "hostingPlanName": {
-            "type": "string"
-        },
-        "serverFarmResourceGroup": {
-            "type": "string"
-        },
-        "alwaysOn": {
-            "type": "bool"
-        },
-        "flowUrl": {
-            "type": "string"
-        },
-        "flowKey": {
-            "type": "string"
+            "type": "string",
+            "allowedValues": [
+                "F1",
+                "D1",
+                "B1",
+                "B2",
+                "S1"
+            ],
+            "metadata": {
+                "description": "The SKU of App Service Plan."
+            }
         }
     },
     "variables": {
-        "contentShare": "flowproxy819d"
+        "webAppName": "[format('app-{0}-{1}', parameters('appNamePrefix'), substring(uniqueString(resourceGroup().id, deployment().name), 0, 4))]",
+        "appServicePlanName": "[format('plan-{0}-{1}', parameters('appNamePrefix'), substring(uniqueString(resourceGroup().id, deployment().name), 0, 4))]"
     },
     "resources": [
         {
-            "apiVersion": "2022-03-01",
-            "name": "[parameters('name')]",
-            "type": "Microsoft.Web/sites",
-            "kind": "functionapp",
-            "location": "[parameters('location')]",
-            "tags": {},
-            "dependsOn": [
-                "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
-                "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]"
-            ],
-            "properties": {
-                "name": "[parameters('name')]",
-                "siteConfig": {
-                    "appSettings": [
-                        {
-                            "name": "FUNCTIONS_EXTENSION_VERSION",
-                            "value": "~4"
-                        },
-                        {
-                            "name": "FUNCTIONS_WORKER_RUNTIME",
-                            "value": "node"
-                        },
-                        {
-                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
-                            "value": "~20"
-                        },
-                        {
-                            "name": "AzureWebJobsStorage",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-06-01').keys[0].value,';EndpointSuffix=','core.windows.net')]"
-                        },
-                        {
-                            "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-06-01').keys[0].value,';EndpointSuffix=','core.windows.net')]"
-                        },
-                        {
-                            "name": "WEBSITE_CONTENTSHARE",
-                            "value": "[variables('contentShare')]"
-                        },
-                        {
-                            "name": "FLOW_URL",
-                            "value": "[parameters('flowUrl')]"
-                        },
-                        {
-                            "name": "FLOW_KEY",
-                            "value": "[parameters('flowKey')]"
-                        }
-                    ],
-                    "cors": {
-                        "allowedOrigins": [
-                            "https://portal.azure.com"
-                        ]
-                    },
-                    "use32BitWorkerProcess": "[parameters('use32BitWorkerProcess')]",
-                    "ftpsState": "[parameters('ftpsState')]",
-                    "netFrameworkVersion": "[parameters('netFrameworkVersion')]"
-                },
-                "clientAffinityEnabled": false,
-                "virtualNetworkSubnetId": null,
-                "functionsRuntimeAdminIsolationEnabled": true,
-                "publicNetworkAccess": "Enabled",
-                "httpsOnly": true,
-                "serverFarmId": "[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
-            },
-            "resources": [
-                {
-                    "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
-                    "apiVersion": "2022-09-01",
-                    "name": "[concat(parameters('name'), '/scm')]",
-                    "properties": {
-                        "allow": false
-                    },
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Web/Sites', parameters('name'))]"
-                    ]
-                },
-                {
-                    "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
-                    "apiVersion": "2022-09-01",
-                    "name": "[concat(parameters('name'), '/ftp')]",
-                    "properties": {
-                        "allow": false
-                    },
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Web/Sites', parameters('name'))]"
-                    ]
-                },
-                {
-                    "type": "sourcecontrols",
-                    "apiVersion": "2018-11-01",
-                    "name": "web",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Web/sites', parameters('name'))]"
-                    ],
-                    "properties": {
-                        "repoUrl": "https://github.com/itweedie/AzureFunction-PowerAutomateProxy/releases/download/v2.0.2/function-app.zip",
-                        "branch": "master",
-                        "isManualIntegration": true
-                    }
-                }
-            ]
-        },
-        {
-            "apiVersion": "2018-11-01",
-            "name": "[parameters('hostingPlanName')]",
             "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2022-09-01",
+            "name": "[variables('appServicePlanName')]",
             "location": "[parameters('location')]",
-            "kind": "",
-            "tags": {},
-            "dependsOn": [],
-            "properties": {
-                "name": "[parameters('hostingPlanName')]",
-                "workerSize": "[parameters('workerSize')]",
-                "workerSizeId": "[parameters('workerSizeId')]",
-                "numberOfWorkers": "[parameters('numberOfWorkers')]"
-            },
             "sku": {
-                "Tier": "[parameters('sku')]",
-                "Name": "[parameters('skuCode')]"
+                "name": "[parameters('sku')]"
             }
         },
         {
-            "apiVersion": "2022-05-01",
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[parameters('storageAccountName')]",
-            "dependsOn": [],
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2022-09-01",
+            "name": "[variables('webAppName')]",
             "location": "[parameters('location')]",
-            "tags": {},
-            "sku": {
-                "name": "Standard_LRS"
-            },
             "properties": {
-                "supportsHttpsTrafficOnly": true,
-                "minimumTlsVersion": "TLS1_2",
-                "defaultToOAuthAuthentication": true
+                "clientAffinityEnabled": false,
+                "httpsOnly": true,
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+                "siteConfig": {
+                    "netFrameworkVersion": "v8.0",
+                    "ftpsState": "Disabled",
+                    "minTlsVersion": "1.2",
+                    "scmMinTlsVersion": "1.2"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "apiVersion": "2022-09-01",
+            "name": "[format('{0}/default', variables('webAppName'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('webAppName'))]"
+            ],
+            "properties": {
+                "hostNameType": "Verified",
+                "customHostNameDnsRecordType": "CName"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/sourcecontrols",
+            "apiVersion": "2022-09-01",
+            "name": "[format('{0}/web', variables('webAppName'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('webAppName'))]"
+            ],
+            "properties": {
+                "repoUrl": "https://github.com/itweedie/AzureFunction-PowerAutomateProxy/releases/download/v2.0.2/function-app.zip",
+                "branch": "master",
+                "isManualIntegration": true
             }
         }
     ]
