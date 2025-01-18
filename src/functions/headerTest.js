@@ -1,4 +1,6 @@
-methods: ['GET', 'POST', 'OPTIONS'],
+const { app } = require('@azure/functions');
+
+app.http('headerTest', {
     authLevel: 'anonymous',
     handler: async (request, context) => {
         // Log headers for debugging
@@ -41,3 +43,5 @@ methods: ['GET', 'POST', 'OPTIONS'],
         };
     }
 });
+
+
