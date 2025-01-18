@@ -60,6 +60,18 @@
         "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
         "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
       ]
+    },
+    {
+      "type": "Microsoft.Web/sites/slots",
+      "apiVersion": "2022-03-01",
+      "name": "[concat(parameters('functionAppName'), '/production')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "packageUri": "https://github.com/itweedie/AzureFunction-PowerAutomateProxy/releases/download/v2.0.2/function-app.zip"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
+      ]
     }
   ],
   "parameters": {
