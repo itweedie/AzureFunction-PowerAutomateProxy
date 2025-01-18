@@ -10,10 +10,6 @@
             "type": "array",
             "defaultValue": ["proxy", "Trigger", "Trigger2"]
         },
-        "githubReleaseUrl": {
-            "type": "string",
-            "defaultValue": "https://github.com/owner/repo/releases/download/v1.0.0/artifact.zip"
-        },
         "functionAppName": {
             "type": "string",
             "defaultValue": "myFunctionApp"
@@ -24,6 +20,14 @@
                 "name": "Y1",
                 "tier": "Dynamic"
             }
+        },
+        "gitRepositoryUrl": {
+            "type": "string",
+            "defaultValue": "https://github.com/owner/repo.git"
+        },
+        "gitBranch": {
+            "type": "string",
+            "defaultValue": "main"
         }
     },
     "variables": {
@@ -55,7 +59,20 @@
                 "siteConfig": {
                     "numberOfWorkers": 1,
                     "functionAppScaleLimit": 200,
-                    "minimumElasticInstanceCount": 1
+                    "minimumElasticInstanceCount": 1,
+                    "scmType": "LocalGit",
+                    "appSettings": [
+                        {
+                            "name": "WEBSITE_RUN_FROM_PACKAGE",
+                            "value": "1"
+                        },
+                        {
+                            "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
+                            "value": "true"
+                        }
+                    ],
+                    "repoUrl": "[parameters('gitRepositoryUrl')]",
+                    "branch": "[parameters('gitBranch')]"
                 },
                 "httpsOnly": true
             }
@@ -71,22 +88,6 @@
             "properties": {
                 "siteName": "[concat(parameters('functionAppName'), '-', variables('randomSuffix'))]",
                 "hostNameType": "Verified"
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deploymentScripts",
-            "apiVersion": "2022-10-01",
-            "name": "deployFunctionCode",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', concat(parameters('functionAppName'), '-', variables('randomSuffix')))]"
-            ],
-            "properties": {
-                "forceUpdateTag": "1.0",
-                "azPowerShellVersion": "5.0",
-                "scriptContent": "New-AzStorageBlobCopy -AbsoluteUri \"[parameters('githubReleaseUrl')]\" -DestinationContainer \"function-releases\" -DestinationBlob \"artifact.zip\"; Start-Sleep -Seconds 10; Expand-Archive -Path \"artifact.zip\" -DestinationPath \"C:\\home\\site\\wwwroot\";",
-                "timeout": "PT30M",
-                "cleanupPreference": "Always"
             }
         }
     ]
