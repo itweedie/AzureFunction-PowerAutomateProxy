@@ -12,7 +12,7 @@
         },
         "githubReleaseUrl": {
             "type": "string",
-            "defaultValue": "https://github.com/itweedie/AzureFunction-PowerAutomateProxy/releases/download/v2.0.2/function-app.zip"
+            "defaultValue": "https://github.com/owner/repo/releases/download/v1.0.0/artifact.zip"
         },
         "functionAppName": {
             "type": "string",
@@ -84,7 +84,7 @@
             "properties": {
                 "forceUpdateTag": "1.0",
                 "azPowerShellVersion": "5.0",
-                "scriptContent": "New-AzStorageBlobCopy -AbsoluteUri [parameters('githubReleaseUrl')] -DestinationContainer 'function-releases' -DestinationBlob 'artifact.zip'; Start-Sleep -Seconds 10; Expand-Archive -Path artifact.zip -DestinationPath \"C:\\home\\site\\wwwroot\";",
+                "scriptContent": "New-AzStorageBlobCopy -AbsoluteUri \"[parameters('githubReleaseUrl')]\" -DestinationContainer \"function-releases\" -DestinationBlob \"artifact.zip\"; Start-Sleep -Seconds 10; Expand-Archive -Path \"artifact.zip\" -DestinationPath \"C:\\home\\site\\wwwroot\";",
                 "timeout": "PT30M",
                 "cleanupPreference": "Always"
             }
