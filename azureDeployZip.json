@@ -52,6 +52,14 @@
             {
               "name": "WEBSITE_NODE_DEFAULT_VERSION",
               "value": "~20"
+            },
+            {
+              "name": "FLOW_KEY",
+              "value": "[parameters('flowKey')]"
+            },
+            {
+              "name": "FLOW_URL",
+              "value": "[parameters('flowUrl')]"
             }
           ]
         }
@@ -77,7 +85,50 @@
   "parameters": {
     "location": {
       "type": "string",
-      "defaultValue": "West Europe",
+"defaultValue": "UK South",
+      "allowedValues": [
+        "East US",
+        "East US 2",
+        "West US",
+        "West US 2",
+        "Central US",
+        "North Central US",
+        "South Central US",
+        "West Europe",
+        "North Europe",
+        "Southeast Asia",
+        "East Asia",
+        "Japan East",
+        "Japan West",
+        "Australia East",
+        "Australia Southeast",
+        "Central India",
+        "South India",
+        "West India",
+        "Canada Central",
+        "Canada East",
+        "UK South",
+        "UK West",
+        "West Central US",
+        "Korea Central",
+        "Korea South",
+        "France Central",
+        "France South",
+        "Australia Central",
+        "Australia Central 2",
+        "UAE North",
+        "UAE Central",
+        "South Africa North",
+        "South Africa West",
+        "Switzerland North",
+        "Switzerland West",
+        "Germany North",
+        "Germany West Central",
+        "Norway East",
+        "Norway West",
+        "Brazil South",
+        "Brazil Southeast"
+      ],
       "metadata": {
         "description": "Location for all resources."
       }
@@ -91,8 +142,8 @@
     },
     "functionAppName": {
       "type": "string",
-      "defaultValue": "my-function-app",
-      "metadata": {
+      "defaultValue": "[concat('funcapp-', uniqueString(resourceGroup().id))]",
+       "metadata": {
         "description": "Name of the Azure Function App."
       }
     },
@@ -101,6 +152,18 @@
       "defaultValue": "mystorageaccount",
       "metadata": {
         "description": "Name of the storage account."
+      }
+    },
+    "flowKey": {
+      "type": "string",
+      "metadata": {
+        "description": "The FLOW_KEY environment variable."
+      }
+    },
+    "flowUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "The FLOW_URL environment variable."
       }
     }
   }
