@@ -1,2 +1,2 @@
-git tag -a v2.0.0 -m "Release version 2.0.0"
-git push origin v2.0.0
+From the project root folder run the following in PowerShell
+`.\.github\workflows\deploy.ps1`

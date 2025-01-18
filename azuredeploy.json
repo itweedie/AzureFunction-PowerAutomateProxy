@@ -75,7 +75,7 @@
       "name": "[concat(parameters('functionAppName'), '/MSDeploy')]",
       "location": "[parameters('location')]",
       "properties": {
-        "packageUri": "3.0.2""/function-app.zip"
+        "packageUri": "https://github.com/itweedie/AzureFunction-PowerAutomateProxy/releases/download/v3.0.8/function-app.zip"
       },
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"

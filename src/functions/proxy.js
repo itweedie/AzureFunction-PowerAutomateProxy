@@ -10,11 +10,22 @@ const FLOW_KEY = process.env.FLOW_KEY; // Flow-Key for authentication or identif
 
 
 app.http('proxy', {
-    methods: ['GET'],
+    methods: ['GET', 'POST', 'OPTIONS'],
     authLevel: 'anonymous',
     handler: async (request, context) => {
         // Log headers for debugging
         context.log('Request Headers:', request.headers);
+
+        if (request.method === 'OPTIONS') {
+            return {
+                status: 204,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                    'Access-Control-Allow-Headers': 'Content-Type'
+                }
+            };
+        }
 
         try {
             // Extract and log incoming request headers for debugging purposes
@@ -46,9 +57,10 @@ app.http('proxy', {
 
             // Make the HTTP request to the external Logic App
             const response = await axios({
-                method: 'get', // Use GET method to retrieve data
+                method: request.method.toLowerCase(), // Use the request method (GET or POST)
                 url: fullUrl, // Full URL including query parameters
                 headers: headersToSend, // Headers including all incoming and custom ones
+                data: request.method === 'POST' ? request.body : undefined, // Include body for POST requests
                 responseType: 'arraybuffer', // Expect binary data (e.g., files) as response
                 timeout: 60000 // Timeout after 60 seconds if no response
             });

@@ -12,7 +12,7 @@ This repository contains an Azure Function that acts as an HTTP Proxy to authent
 
 # Azure Function Power Automate Proxy
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fitweedie%2FAzureFunction-PowerAutomateProxy%2Frefs%2Fheads%2Fmain%2FazureDeployZip.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton" /></a>
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fitweedie%2FAzureFunction-PowerAutomateProxy%2Frefs%2Fheads%2Fmain%2Fazuredeploy.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton" /></a>
 
 This repository contains an Azure Function that acts as a proxy for Power Automate.
 
@@ -53,7 +53,7 @@ Whenever you want to update the Azure Function, simply commit and push your chan
 
 
 
-## Setup Instructions
+## Development Instructions
 
 ### Prerequisites flow Local Development
 
@@ -101,7 +101,38 @@ Whenever you want to update the Azure Function, simply commit and push your chan
     curl -X GET http://localhost:7071/api/proxy -H "X-MS-CLIENT-PRINCIPAL-ID: custom-id"
     ```
 
-    ### Configuration
+
+### Deploy new version
+From the project root folder run the following in PowerShell
+`.\.github\workflows\deploy.ps1`
+
+1. **Read the current version number from the file**
+
+    - The script reads the current version number from the `versionNumber.txt` file located in the [workflows](http://_vscodecontentref_/1) directory.
+
+2. **Split the version number and increment the last part**
+
+    - The script splits the version number into its components (major, minor, patch).
+    - It increments the patch version by 1.
+    - It then constructs the new version number.
+
+3. **Update the version number in the file**
+
+    - The script writes the new version number back to the `versionNumber.txt` file.
+
+4. **Update the packageUri in azuredeploy.json**
+
+    - The script reads the `azuredeploy.json` file.
+    - It updates the `packageUri` field with the new version number.
+    - It writes the updated content back to the `azuredeploy.json` file.
+
+5. **Commit the changes and push the new tag**
+
+    - It commits the changes with a message indicating the new version number.
+    - It creates a new git tag for the new version.
+    - It pushes the new tag and the changes to the remote repository.
+
+### Configuration
 
 - The external Power Automate Flow URL is set using the `FLOW_URL` environment variable.
 - The `Flow-Key` header is added using the `FLOW_KEY` environment variable.
