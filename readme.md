@@ -10,7 +10,11 @@ This repository contains an Azure Function that acts as an HTTP Proxy to authent
 - Configurable via environment variables to avoid hardcoding sensitive data like URLs and keys.
 - Proper error handling and logging for easy debugging.
 
+# Azure Function Power Automate Proxy
 
+[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/?repository=https%3A%2F%2Fraw.githubusercontent.com%2Fitweedie%2FAzureFunction-PowerAutomateProxy%2Frefs%2Fheads%2Fmain%2FazureDeployZip.json)
+
+This repository contains an Azure Function that acts as a proxy for Power Automate.
 
 ## Steps to Connect:
 
