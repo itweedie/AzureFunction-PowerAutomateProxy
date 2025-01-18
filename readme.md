@@ -5,52 +5,16 @@ This repository contains an Azure Function that acts as an HTTP Proxy to authent
 
 - Forwards all headers received from the incoming request.
 - Adds custom header `Flow-Key` (from environment variables). 
-- Handles `GET` method.
+- Handles `GET`, `POST`, and `OPTIONS` method.
 - Appends query parameters from the incoming request to the external URL.
 - Configurable via environment variables to avoid hardcoding sensitive data like URLs and keys.
 - Proper error handling and logging for easy debugging.
 
-# Azure Function Power Automate Proxy
+## Deploy to your Azure Environment
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fitweedie%2FAzureFunction-PowerAutomateProxy%2Frefs%2Fheads%2Fmain%2Fazuredeploy.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton" /></a>
 
 This repository contains an Azure Function that acts as a proxy for Power Automate.
-
-## Steps to Connect:
-
-1. **Navigate to the Azure Function**:
-   - In the Azure portal, navigate to the resource group where your Azure Function was created.
-   - Click on the Function App to open its dashboard.
-
-2. **Open the Deployment Center**:
-   - In the left-hand menu, scroll down and click on **Deployment Center**. This is where you can configure continuous deployment.
-
-3. **Select GitHub as the Source**:
-   - In the **Deployment Center**, you’ll be asked to choose a source for the code. Select **GitHub** as the source control provider.
-   - Click on **Authorize** to grant Azure access to your GitHub account (if not already authorized).
-
-4. **Choose Your Repository and Branch**:
-   - Select the GitHub repository you forked earlier.
-   - Choose the branch you want to deploy from, typically the default branch (e.g., `main` or `master`).
-
-5. **Set Up Build Provider**:
-   - You can choose between **GitHub Actions** or **Kudu** for deploying your code. 
-     - **GitHub Actions** provides a more modern CI/CD pipeline.
-     - **Kudu** offers a simple and integrated build experience.
-
-6. **Review and Save**:
-   - After selecting the repository and branch, review the setup.
-   - Click on **Save** to establish the connection.
-
-### 5. Verify the Deployment
-After setting up continuous deployment, any new changes pushed to your forked GitHub repository will automatically trigger a deployment to your Azure Function. You can monitor the deployment status and logs in the **Deployment Center**.
-
-- To verify that everything is working, navigate to your Function App URL (found in the Azure portal under the **Overview** tab of your Function App).
-- You should see the function running as expected.
-
-### 6. Update and Maintain the Azure Function
-Whenever you want to update the Azure Function, simply commit and push your changes to the GitHub repository. The continuous deployment pipeline will automatically redeploy the latest changes to Azure.
-
 
 
 ## Development Instructions
@@ -157,3 +121,8 @@ Feel free to open issues or submit pull requests if you want to contribute to th
 ### License
 
 This project is licensed under the MIT License.
+
+
+## To Do
+[ ] Add storagee account with managed identity
+[ ] Add ability to talk to storager accoutn and get json file
