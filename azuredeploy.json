@@ -75,7 +75,7 @@
       "name": "[concat(parameters('functionAppName'), '/MSDeploy')]",
       "location": "[parameters('location')]",
       "properties": {
-        "packageUri": "1.0.6"/function-app.zip"
+        "packageUri": "3.0.2""/function-app.zip"
       },
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
