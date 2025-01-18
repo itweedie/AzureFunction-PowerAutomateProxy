@@ -22,7 +22,7 @@
       "name": "[parameters('storageAccountName')]",
       "location": "[parameters('location')]",
       "sku": {
-        "name": "Standard_LRS"
+        "name": "Standard_LRS" 
       },
       "kind": "StorageV2",
       "properties": {}
@@ -47,7 +47,11 @@
             },
             {
               "name": "FUNCTIONS_WORKER_RUNTIME",
-              "value": "dotnet" // Change to "node" or "python" as needed
+              "value": "node"
+            },
+            {
+              "name": "WEBSITE_NODE_DEFAULT_VERSION",
+              "value": "~20"
             }
           ]
         }
