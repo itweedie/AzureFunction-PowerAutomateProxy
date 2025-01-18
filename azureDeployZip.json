@@ -1,101 +1,91 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "metadata": {
-        "_generator": {
-        "name": "bicep",
-        "version": "0.15.31.15270",
-        "templateHash": "11861629922040246994"
-        }
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "resources": [
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2022-03-01",
+      "name": "[parameters('hostingPlanName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Y1",
+        "tier": "Dynamic",
+        "size": "Y1",
+        "family": "Y",
+        "capacity": 0
+      },
+      "kind": "functionapp"
     },
-    "parameters": {
-        "location": {
-            "type": "string",
-            "defaultValue": "UK South"
-        },
-        "functionNames": {
-            "type": "array",
-            "defaultValue": ["proxy", "Trigger", "Trigger2"]
-        },
-        "functionAppName": {
-            "type": "string",
-            "defaultValue": "myFunctionApp"
-        },
-        "appServicePlanSku": {
-            "type": "object",
-            "defaultValue": {
-                "name": "Y1",
-                "tier": "Dynamic"
-            }
-        },
-        "gitRepositoryUrl": {
-            "type": "string",
-            "defaultValue": "https://github.com/owner/repo.git"
-        },
-        "gitBranch": {
-            "type": "string",
-            "defaultValue": "main"
-        }
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2022-05-01",
+      "name": "[parameters('storageAccountName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "StorageV2",
+      "properties": {}
     },
-    "variables": {
-        "randomSuffix": "[uniqueString(resourceGroup().id)]"
-    },
-    "resources": [
-        {
-            "type": "Microsoft.Web/serverfarms",
-            "apiVersion": "2023-12-01",
-            "name": "[concat(parameters('functionAppName'), '-plan-', variables('randomSuffix'))]",
-            "location": "[parameters('location')]",
-            "sku": "[parameters('appServicePlanSku')]",
-            "properties": {
-                "computeMode": "Dynamic"
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2022-03-01",
+      "name": "[parameters('functionAppName')]",
+      "location": "[parameters('location')]",
+      "kind": "functionapp",
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2022-05-01').keys[0].value, ';EndpointSuffix=core.windows.net')]"
+            },
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "~4"
+            },
+            {
+              "name": "FUNCTIONS_WORKER_RUNTIME",
+              "value": "dotnet" // Change to "node" or "python" as needed
             }
-        },
-        {
-            "type": "Microsoft.Web/sites",
-            "apiVersion": "2023-12-01",
-            "name": "[concat(parameters('functionAppName'), '-', variables('randomSuffix'))]",
-            "location": "[parameters('location')]",
-            "kind": "functionapp",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', concat(parameters('functionAppName'), '-plan-', variables('randomSuffix')))]"
-            ],
-            "properties": {
-                "enabled": true,
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', concat(parameters('functionAppName'), '-plan-', variables('randomSuffix')))]",
-                "siteConfig": {
-                    "numberOfWorkers": 1,
-                    "functionAppScaleLimit": 200,
-                    "minimumElasticInstanceCount": 1,
-                    "scmType": "LocalGit",
-                    "appSettings": [
-                        {
-                            "name": "WEBSITE_RUN_FROM_PACKAGE",
-                            "value": "1"
-                        },
-                        {
-                            "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
-                            "value": "true"
-                        }
-                    ],
-                    "repoUrl": "[parameters('gitRepositoryUrl')]",
-                    "branch": "[parameters('gitBranch')]"
-                },
-                "httpsOnly": true
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/hostNameBindings",
-            "apiVersion": "2023-12-01",
-            "name": "[concat(parameters('functionAppName'), '-', variables('randomSuffix'), '/', parameters('functionAppName'), '-', variables('randomSuffix'), '.azurewebsites.net')]",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', concat(parameters('functionAppName'), '-', variables('randomSuffix')))]"
-            ],
-            "properties": {
-                "siteName": "[concat(parameters('functionAppName'), '-', variables('randomSuffix'))]",
-                "hostNameType": "Verified"
-            }
+          ]
         }
-    ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+      ]
+    }
+  ],
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "West Europe",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    },
+    "hostingPlanName": {
+      "type": "string",
+      "defaultValue": "my-consumption-plan",
+      "metadata": {
+        "description": "Name of the hosting plan."
+      }
+    },
+    "functionAppName": {
+      "type": "string",
+      "defaultValue": "my-function-app",
+      "metadata": {
+        "description": "Name of the Azure Function App."
+      }
+    },
+    "storageAccountName": {
+      "type": "string",
+      "defaultValue": "mystorageaccount",
+      "metadata": {
+        "description": "Name of the storage account."
+      }
+    }
+  }
 }
