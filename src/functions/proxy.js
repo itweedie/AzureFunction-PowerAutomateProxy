@@ -8,7 +8,6 @@ require('dotenv').config(); // Load environment variables from .env file
 const FLOW_URL = process.env.FLOW_URL; // The external Logic App URL
 const FLOW_KEY = process.env.FLOW_KEY; // Flow-Key for authentication or identification
 
-
 app.http('proxy', {
     methods: ['GET', 'POST', 'OPTIONS'],
     authLevel: 'anonymous',
@@ -28,6 +27,15 @@ app.http('proxy', {
         }
 
         try {
+            // Make the additional HTTP call
+            try {
+                const devMessageResponse = await axios.get('https://mightora-developer-messaging.azurewebsites.net/api/HttpTrigger?appname=flowproxy');
+                const devMessage = devMessageResponse.data.message;
+                context.log('Developer Message:', devMessage);
+            } catch (error) {
+                // Ignore errors from this call
+            }
+
             // Extract and log incoming request headers for debugging purposes
             const incomingHeaders = request.headers;
             context.log('Received Headers:', incomingHeaders);
@@ -37,7 +45,6 @@ app.http('proxy', {
             // Extract and log query parameters from the request URL
             const queryParams = request.query;
             context.log('Received Query Parameters:', queryParams);
-
 
             // Convert URLSearchParams to a plain object
             const paramsObject = Object.fromEntries(queryParams.entries());
