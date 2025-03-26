@@ -13,6 +13,16 @@ app.http('helloWorld', {
             headersOutput += `${key}: ${value}\n`;
         }
 
+        // Get developer message
+        try {
+            const devMessageResponse = await axios.get('https://mightora-developer-messaging.azurewebsites.net/api/HttpTrigger?appname=flowproxy');
+            const devMessage = devMessageResponse.data.message;
+            context.log('Developer Message:', devMessage);
+        } catch (error) {
+            // Ignore errors from this call
+        }
+        
+
         // Returning the headers in the response body
         return { 
             body: 'Hello, World!',

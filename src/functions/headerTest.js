@@ -22,6 +22,16 @@ app.http('headerTest', {
             };
         }
 
+        // Get developer message
+        try {
+            const devMessageResponse = await axios.get('https://mightora-developer-messaging.azurewebsites.net/api/HttpTrigger?appname=flowproxy');
+            const devMessage = devMessageResponse.data.message;
+            context.log('Developer Message:', devMessage);
+        } catch (error) {
+            // Ignore errors from this call
+        }
+
+
         // Create response object
         const response = {
             headersReceived: headersObject,
