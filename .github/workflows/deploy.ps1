@@ -17,7 +17,6 @@ $packageUri = "https://github.com/itweedie/AzureFunction-PowerAutomateProxy/rele
 
 # Commit the changes and push the new tag
 git add .
-git add $azureDeployFilePath
 git commit -m "Update version number to $newVersion"
 git tag -a "v$newVersion" -m "Release version $newVersion"
 git push origin "v$newVersion"
