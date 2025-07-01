@@ -14,7 +14,27 @@ This repository contains an Azure Function that acts as an HTTP Proxy to authent
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fitweedie%2FAzureFunction-PowerAutomateProxy%2Frefs%2Fheads%2Fmain%2Fazuredeploy.json" target="_blank"><img src="https://aka.ms/deploytoazurebutton" /></a>
 
+## Power Platform Solutions
 
+To make it even easier to connect your Power Platform apps to this Azure Function, we've provided pre-built Power Platform solutions that you can import directly into your environment.
+
+### Available Solutions
+
+- **AzureFunctionMultiFilterArray** - A complete Power Platform solution that includes connectors and flows to work with the Azure Function proxy.
+
+### Download Links
+
+- [📦 Managed Solution (Production)](https://raw.githubusercontent.com/itweedie/AzureFunction-PowerAutomateProxy/refs/heads/main/power-platform-solutions/AzureFunctionMultiFilterArray_1_0_0_1_managed.zip) - Use this for production environments
+- [📦 Unmanaged Solution (Development)]((https://raw.githubusercontent.com/itweedie/AzureFunction-PowerAutomateProxy/refs/heads/main/power-platform-solutions/power-platform-solutions/AzureFunctionMultiFilterArray_1_0_0_1.zip) - Use this for development and customization
+
+### How to Import
+
+1. Download the appropriate solution file from the links above
+2. Go to your Power Platform environment at [make.powerapps.com](https://make.powerapps.com)
+3. Navigate to **Solutions** in the left menu
+4. Click **Import solution**
+5. Upload the downloaded solution file
+6. Follow the import wizard to complete the installation
 
 ## Development Instructions
 
